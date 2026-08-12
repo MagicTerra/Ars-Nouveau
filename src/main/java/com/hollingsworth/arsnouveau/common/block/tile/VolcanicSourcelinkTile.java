@@ -35,12 +35,17 @@ public class VolcanicSourcelinkTile extends SourcelinkTile implements GeoAnimata
                 if (source > 0 && (canConsumeEntireItem(i.getItem()) || this.getSource() <= 0)) {
                     this.addSource(source);
                     ItemStack containerItem = i.getItem().getCraftingRemainingItem();
-                    i.getItem().shrink(1);
+                    ItemStack remaining = i.getItem().copy();
+                    remaining.shrink(1);
+                    i.setItem(remaining);
                     if (!containerItem.isEmpty()) {
                         level.addFreshEntity(new ItemEntity(level, i.getX(), i.getY(), i.getZ(), containerItem));
                     }
                     Networking.sendToNearbyClient(level, getBlockPos(),
                             new PacketANEffect(PacketANEffect.EffectType.BURST, i.blockPosition(), new ParticleColor(255, 0, 0)));
+                    if (remaining.isEmpty()) {
+                        i.discard();
+                    }
                     return;
                 }
             }
