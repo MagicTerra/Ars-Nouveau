@@ -54,6 +54,9 @@ public class StandardSpellValidator implements ISpellValidator {
         if (enforceCastTimeValidations) {
             validators.add(NON_EMPTY_SPELL);
             validators.add(REQUIRE_CAST_METHOD_START);
+            // Combos banned in config are banned because they multiply into server-killing amounts of work;
+            // checking them only at crafting time leaves every spell written before the ban fully castable.
+            validators.add(INVALID_COMBINATION_POLICY);
             if (ServerConfig.ENFORCE_AUGMENT_CAP_ON_CAST.get()) {
                 validators.add(EFFECT_AUGMENTATION_POLICY);
             }
