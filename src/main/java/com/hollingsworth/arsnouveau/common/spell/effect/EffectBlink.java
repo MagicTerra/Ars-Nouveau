@@ -168,6 +168,10 @@ public class EffectBlink extends AbstractEffect {
      * Checks is a player can be placed at a given position without suffocating.
      */
     public static boolean isValidTeleport(Level world, BlockPos pos) {
+        // getBlockState on an unloaded chunk loads or even generates it synchronously on the server thread;
+        // a spell that blinks hundreds of times per cast would walk that off into kilometres of new terrain.
+        if (!world.hasChunkAt(pos))
+            return false;
         return !world.getBlockState(pos).canOcclude() && !world.getBlockState(pos.above()).canOcclude() && !world.getBlockState(pos.above(2)).canOcclude();
     }
 
